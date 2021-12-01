@@ -1,0 +1,17 @@
+---
+BasedOnStyle: Microsoft
+AccessModifierOffset: -4
+AlignEscapedNewlines: DontAlign
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
+BreakBeforeBraces: Allman
+BreakInheritanceList: BeforeComma
+BreakConstructorInitializers : BeforeComma
+BreakStringLiterals: false
+ColumnLimit: 0
+Language: Cpp
+ReflowComments: false
+UseTab: Always
+PointerAlignment: Left
+IncludeBlocks: Merge
+...

@@ -1,6 +1,8 @@
 #include "StaticFunctions.h"
 #include "Types.h"
+#include <algorithm>
 #include <iostream>
+#include <map>
 
 const uint Functions::slidingSonarSweep(const std::vector<uint>& vec, const uint window)
 {
@@ -135,7 +137,7 @@ const uint getRating(const std::vector<std::bitset<16>>& vec, const uint validbi
 {
 	std::vector<uint> counts(validbitnum);
 	std::fill(counts.begin(), counts.end(), 0u);
-	
+
 	std::vector<std::bitset<16>> shortlist = vec;
 	std::vector<std::bitset<16>> o2shortlist;
 	uint i = validbitnum - 1;
@@ -156,7 +158,7 @@ const uint getRating(const std::vector<std::bitset<16>>& vec, const uint validbi
 		{
 			pref = (counts[i] * 2) < shortlist.size();
 		}
-		
+
 		for (auto& set : shortlist)
 		{
 			if (set[i] == pref)
@@ -179,7 +181,7 @@ const uint Functions::calculateLifeSupportRating(const std::vector<std::bitset<1
 		return 0u;
 	}
 
-	uint O2Rating = getRating(vec,validbitnum,true);
+	uint O2Rating = getRating(vec, validbitnum, true);
 	uint CO2Rating = getRating(vec, validbitnum, false);
 
 	return O2Rating * CO2Rating;
@@ -234,7 +236,7 @@ const uint Functions::calculateLosingBingoScore(std::vector<BingoCard> cards, co
 		for (auto it = leftovercards.begin(); it != leftovercards.end();)
 		{
 			if (Utils::checkBingo(*it, currentnum))
-			{ 
+			{
 				lastwinningcard = leftovercards[0]; // set card
 				it = leftovercards.erase(it);
 			}
@@ -264,6 +266,133 @@ const uint Functions::calculateLosingBingoScore(std::vector<BingoCard> cards, co
 	return sum * currentnum;
 }
 
+const uint Functions::calculateHydrothermalDanger(const Lines& lines, bool diag)
+{
+	Lines xlines;
+	Lines ylines;
+	Lines diaglines;
+
+	for (auto& line : lines)
+	{
+		if (line.p1.x == line.p2.x)
+		{
+			ylines.push_back(line);
+		}
+		else if (line.p1.y == line.p2.y)
+		{
+			xlines.push_back(line);
+		}
+		else if (diag &&
+				 (std::abs((int)line.p1.x - (int)line.p2.x) == std::abs((int)line.p1.y - (int)line.p2.y)))
+		//((line.p1.x == line.p1.y && line.p2.x == line.p2.y) ||
+		// (line.p1.x == line.p2.y && line.p1.y == line.p2.x)))
+		{
+			diaglines.push_back(line);
+		}
+	}
+
+	if ((!xlines.size() || !ylines.size()) || (diag && !diaglines.size()))
+	{
+		return 0u;
+	}
+
+	Coordinates c;
+	for (auto& line : xlines)
+	{
+		if (line.p1.x > line.p2.x)
+		{
+			for (uint i = line.p2.x; i <= line.p1.x; i++)
+			{
+				c.push_back({i, line.p1.y});
+			}
+		}
+		else
+		{
+			for (uint i = line.p1.x; i <= line.p2.x; i++)
+			{
+				c.push_back({i, line.p1.y});
+			}
+		}
+	}
+
+	for (auto& line : ylines)
+	{
+		if (line.p1.y > line.p2.y)
+		{
+			for (uint i = line.p2.y; i <= line.p1.y; i++)
+			{
+				c.push_back({line.p1.x, i});
+			}
+		}
+		else
+		{
+			for (uint i = line.p1.y; i <= line.p2.y; i++)
+			{
+				c.push_back({line.p1.x, i});
+			}
+		}
+	}
+
+	if (diag)
+	{
+		for (auto& line : diaglines)
+		{
+			if (line.p1.x > line.p2.x && line.p1.y > line.p2.y) // + +
+			{
+				uint iters = line.p1.x - line.p2.x;
+				for (uint i = 0; i <= iters; i++)
+				{
+					c.push_back({line.p2.x + i, line.p2.y + i});
+				}
+			}
+			else if (line.p1.x > line.p2.x && line.p1.y < line.p2.y) // + -
+			{
+				uint iters = line.p1.x - line.p2.x;
+				for (uint i = 0; i <= iters; i++)
+				{
+					c.push_back({line.p2.x + i, line.p2.y - i});
+				}
+			}
+			else if (line.p1.x < line.p2.x && line.p1.y < line.p2.y) // - -
+			{
+				uint iters = line.p2.x - line.p1.x;
+				for (uint i = 0; i <= iters; i++)
+				{
+					c.push_back({line.p2.x - i, line.p2.y - i});
+				}
+			}
+			else // - +
+			{
+				uint iters = line.p2.x - line.p1.x;
+				for (uint i = 0; i <= iters; i++)
+				{
+					c.push_back({line.p2.x - i, line.p2.y + i});
+				}
+			}
+		}
+	}
+
+	std::sort(c.begin(), c.end(),
+			  [](Coordinate& a, Coordinate& b) -> bool { return std::tie(a.x, a.y) < std::tie(b.x, b.y); });
+
+	std::map<Coordinate, size_t> dups;
+	for (auto& i : c)
+	{
+		++dups[i];
+	}
+
+	uint count = 0;
+	for (auto& [key, value] : dups)
+	{
+		if (value > 1)
+		{
+			count++;
+		}
+	}
+
+	return count;
+}
+
 BingoCard Utils::createBingoCard(const std::vector<uint>& input)
 {
 	// Bingo cards are a FIXED 5x5 array!!
@@ -279,7 +408,7 @@ BingoCard Utils::createBingoCard(const std::vector<uint>& input)
 	{
 		for (size_t j = 0; j < c.data[i].size(); j++)
 		{
-			std::get<0>(c.data[i][j]) = input[i*5 + j];
+			std::get<0>(c.data[i][j]) = input[i * 5 + j];
 		}
 	}
 	c.isSet = true;
@@ -292,18 +421,17 @@ bool Utils::checkBingo(BingoCard& card, uint number)
 	bool found = false;
 	uint row = 0;
 	uint col = 0;
-	
+
 	// check if number is in card
 	for (row = 0; row < card.data.size() && !found; row++)
 	{
 		for (col = 0; col < card.data[row].size() && !found; col++)
 		{
-			if(std::get<0>(card.data[row][col]) == number)
+			if (std::get<0>(card.data[row][col]) == number)
 			{
 				// mark number as played
 				std::get<1>(card.data[row][col]) = true;
 				found = true;
-
 			}
 			if (found)
 			{
@@ -332,7 +460,7 @@ bool Utils::checkBingo(BingoCard& card, uint number)
 	{
 		return bingo;
 	}
-	
+
 	// check column of number
 	bingo = true;
 	for (size_t i = 0; i < card.data.size(); i++)

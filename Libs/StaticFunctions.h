@@ -1,7 +1,7 @@
 #pragma once
 #include "Types.h"
-#include <vector>
 #include <bitset>
+#include <vector>
 
 class Functions
 {
@@ -13,6 +13,7 @@ public:
 	static const uint calculateLifeSupportRating(const std::vector<std::bitset<16>>& vec, const uint validbitnum);
 	static const uint calculateWinningBingoScore(std::vector<BingoCard> cards, const std::vector<uint>& numbers);
 	static const uint calculateLosingBingoScore(std::vector<BingoCard> cards, const std::vector<uint>& numbers);
+	static const uint calculateHydrothermalDanger(const Lines& lines, bool diag);
 };
 
 class Utils

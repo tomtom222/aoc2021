@@ -15,7 +15,7 @@ typedef std::tuple<uint, bool> BingoNumber;
 
 struct BingoCard
 {
-	BingoCard() 
+	BingoCard()
 	{
 		data.resize(5);
 		for (size_t i = 0; i < data.size(); i++)
@@ -24,5 +24,25 @@ struct BingoCard
 		}
 	}
 	std::vector<std::vector<BingoNumber>> data;
-	bool isSet= false;
+	bool isSet = false;
 };
+
+struct Coordinate
+{
+	uint x = 0;
+	uint y = 0;
+
+	friend bool operator<(const Coordinate& lhs, const Coordinate& rhs)
+	{
+		return std::tie(lhs.x, lhs.y) < std::tie(rhs.x, rhs.y);
+	};
+};
+
+typedef std::vector<Coordinate> Coordinates;
+
+struct Line
+{
+	Coordinate p1;
+	Coordinate p2;
+};
+typedef std::vector<Line> Lines;

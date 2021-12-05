@@ -1,7 +1,7 @@
 #include "pch.h"
 
-#include "Types.h"
 #include "StaticFunctions.h"
+#include "Types.h"
 #include <bitset>
 
 TEST(Day01, SonarSweep)
@@ -52,9 +52,9 @@ TEST(Day03, PowerConsumption)
 			std::bitset<16>{"00010"},
 			std::bitset<16>{"01010"},
 		};
-	
-	EXPECT_EQ(Functions::calculatePowerConsumption(test,5), 198u);
-	EXPECT_EQ(Functions::calculateLifeSupportRating(test,5), 230u);
+
+	EXPECT_EQ(Functions::calculatePowerConsumption(test, 5), 198u);
+	EXPECT_EQ(Functions::calculateLifeSupportRating(test, 5), 230u);
 }
 
 TEST(Day04, Bingo)
@@ -65,8 +65,7 @@ TEST(Day04, Bingo)
 		{
 			{22, 13, 17, 11, 0, 8, 2, 23, 4, 24, 21, 9, 14, 16, 7, 6, 10, 3, 18, 5, 1, 12, 20, 15, 19},
 			{3, 15, 0, 2, 22, 9, 18, 13, 17, 5, 19, 8, 7, 25, 23, 20, 11, 10, 24, 4, 14, 21, 16, 12, 6},
-			{14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0, 12, 3, 7}
-		};
+			{14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0, 12, 3, 7}};
 
 	std::vector<BingoCard> cards;
 	cards.resize(bingoCards.size());
@@ -78,4 +77,23 @@ TEST(Day04, Bingo)
 
 	EXPECT_EQ(Functions::calculateWinningBingoScore(cards, numbers), 4512u);
 	EXPECT_EQ(Functions::calculateLosingBingoScore(cards, numbers), 1924u);
+}
+
+TEST(Day05, Hydrothermal)
+{
+	Lines test =
+		{
+			{{0, 9}, {5, 9}},
+			{{8, 0}, {0, 8}},
+			{{9, 4}, {3, 4}},
+			{{2, 2}, {2, 1}},
+			{{7, 0}, {7, 4}},
+			{{6, 4}, {2, 0}},
+			{{0, 9}, {2, 9}},
+			{{3, 4}, {1, 4}},
+			{{0, 0}, {8, 8}},
+			{{5, 5}, {8, 2}}};
+
+	EXPECT_EQ(Functions::calculateHydrothermalDanger(test, false), 5u);
+	EXPECT_EQ(Functions::calculateHydrothermalDanger(test, true), 12u);
 }

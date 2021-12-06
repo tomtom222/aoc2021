@@ -3,6 +3,7 @@
 #include <vector>
 
 typedef unsigned int uint;
+typedef unsigned long long int uint64;
 
 enum class DiveCommand : uint
 {
@@ -46,3 +47,6 @@ struct Line
 	Coordinate p2;
 };
 typedef std::vector<Line> Lines;
+
+typedef std::pair<uint, uint64> fishage;
+

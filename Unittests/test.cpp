@@ -97,3 +97,12 @@ TEST(Day05, Hydrothermal)
 	EXPECT_EQ(Functions::calculateHydrothermalDanger(test, false), 5u);
 	EXPECT_EQ(Functions::calculateHydrothermalDanger(test, true), 12u);
 }
+
+TEST(Day06, Lanternfish)
+{
+	std::vector<uint> fishpop = {3, 4, 3, 1, 2};
+
+	EXPECT_EQ(Functions::calculateFishPopulation(fishpop, 18u), 26u);
+	EXPECT_EQ(Functions::calculateFishPopulation(fishpop, 80u), 5934u);
+	EXPECT_EQ(Functions::calculateFishPopulation(fishpop, 256u), 26984457539u);
+}

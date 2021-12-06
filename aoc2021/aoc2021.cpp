@@ -23,4 +23,6 @@ int main()
 	std::cout << "Day 04_2: " << Functions::calculateLosingBingoScore(cards, day4numbers) << std::endl;	 // 31755
 	std::cout << "Day 05_1: " << Functions::calculateHydrothermalDanger(day5, false) << std::endl;		 // 7380
 	std::cout << "Day 05_2: " << Functions::calculateHydrothermalDanger(day5, true) << std::endl;		 // 21373
+	std::cout << "Day 06_1: " << Functions::calculateFishPopulation(day6, 80) << std::endl;				 // 352151
+	std::cout << "Day 06_2: " << Functions::calculateFishPopulation(day6, 256) << std::endl;			 // 1601616884019
 }

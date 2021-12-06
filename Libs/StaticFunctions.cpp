@@ -133,6 +133,7 @@ const uint Functions::calculatePowerConsumption(const std::vector<std::bitset<16
 
 	return gammaRate * epsilonRate;
 }
+
 const uint getRating(const std::vector<std::bitset<16>>& vec, const uint validbitnum, bool greater)
 {
 	std::vector<uint> counts(validbitnum);
@@ -388,6 +389,97 @@ const uint Functions::calculateHydrothermalDanger(const Lines& lines, bool diag)
 		{
 			count++;
 		}
+	}
+
+	return count;
+}
+
+
+std::vector<fishage> daycalc(std::vector<fishage>& fish)
+{
+	std::vector<fishage> fishies =
+		{
+			{8, 0},
+			{7, 0},
+			{6, 0},
+			{5, 0},
+			{4, 0},
+			{3, 0},
+			{2, 0},
+			{1, 0},
+			{0, 0},
+		};
+
+
+	for (size_t i = 0; i < fish.size(); i++)
+	{
+		switch (std::get<0>(fish[i]))
+		{
+		case 8:
+		case 7:
+		case 6:
+		case 5:
+		case 4:
+		case 3:
+		case 2:
+		case 1:
+		{
+			auto f = std::get<1>(fish[i]);
+			std::get<1>(fishies[i + 1]) += f; 
+			//std::get<1>(fish[i]) -= f; 
+			break;
+		}
+		case 0:
+		{
+			auto f = std::get<1>(fish[i]);
+			std::get<1>(fishies[2]) += f;
+			std::get<1>(fishies[0]) += f;
+			//std::get<1>(fish[8]) -= f;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	return fishies;
+}
+
+const uint64 Functions::calculateFishPopulation(std::vector<uint> fish, const uint days)
+{
+	std::vector<fishage> fishies = 
+	{
+			{8,0},
+			{7,0},
+			{6,0},
+			{5,0},
+			{4,0},
+			{3,0},
+			{2,0},
+			{1,0},
+			{0,0},
+	};
+
+	for (size_t i = 0; i < fish.size(); i++)
+	{
+		for (size_t j = 0; j < fishies.size(); j++)
+		{
+			if (std::get<0>(fishies[j]) == fish[i])
+			{
+				std::get<1>(fishies[j])++;
+			}
+		}
+	}
+
+	
+	for (size_t i = 0; i < days; i++)
+	{
+		fishies = daycalc(fishies);
+	}
+
+	uint64 count = 0;
+	for (auto& f : fishies)
+	{
+		count += std::get<1>(f);
 	}
 
 	return count;

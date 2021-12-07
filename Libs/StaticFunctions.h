@@ -15,6 +15,7 @@ public:
 	static const uint calculateLosingBingoScore(std::vector<BingoCard> cards, const std::vector<uint>& numbers);
 	static const uint calculateHydrothermalDanger(const Lines& lines, bool diag);
 	static const uint64 calculateFishPopulation(std::vector<uint> fish, const uint days);
+	static const std::pair<uint, uint> calculateCrabSubmarineFuelReq(std::vector<uint> crabs, bool correctfuel = false);
 };
 
 class Utils

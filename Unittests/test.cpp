@@ -106,3 +106,13 @@ TEST(Day06, Lanternfish)
 	EXPECT_EQ(Functions::calculateFishPopulation(fishpop, 80u), 5934u);
 	EXPECT_EQ(Functions::calculateFishPopulation(fishpop, 256u), 26984457539u);
 }
+
+TEST(Day07, CrabPower)
+{
+	std::vector<uint> crabs = {16, 1, 2, 0, 4, 2, 7, 1, 2, 14};
+	auto answer = std::pair<uint, uint>{2u, 37u};
+	EXPECT_EQ(Functions::calculateCrabSubmarineFuelReq(crabs), answer);
+
+	answer = std::pair<uint, uint>{5u, 168u};
+	EXPECT_EQ(Functions::calculateCrabSubmarineFuelReq(crabs, true), answer);
+}

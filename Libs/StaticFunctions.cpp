@@ -485,6 +485,51 @@ const uint64 Functions::calculateFishPopulation(std::vector<uint> fish, const ui
 	return count;
 }
 
+const std::pair<uint,uint> Functions::calculateCrabSubmarineFuelReq(std::vector<uint> crabs, bool correctfuel)
+{
+	uint maxheight = 0;
+	uint minheight = UINT_MAX;
+
+	for (auto& crab : crabs)
+	{
+		if (crab > maxheight)
+		{
+			maxheight = crab;
+		}
+		if (crab < minheight)
+		{
+			minheight = crab;
+		}
+	}
+
+	std::pair<uint, uint> fuelreq = {0, UINT_MAX};
+	for (uint i = minheight; i <= maxheight; i++)
+	{
+		uint fuel = 0;
+		for (auto& crab : crabs)
+		{
+			if (correctfuel)
+			{
+				uint diff = std::abs((int)i - (int)crab);
+
+				fuel += (diff*(diff+1))/2;
+			}
+			else
+			{
+				fuel += std::abs((int)i - (int)crab);
+			}
+		}
+
+		if (fuel < std::get<1>(fuelreq))
+		{
+			std::get<0>(fuelreq) = i;
+			std::get<1>(fuelreq) = fuel;
+		}
+	}
+
+	return fuelreq;
+}
+
 BingoCard Utils::createBingoCard(const std::vector<uint>& input)
 {
 	// Bingo cards are a FIXED 5x5 array!!

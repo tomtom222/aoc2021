@@ -2,6 +2,7 @@
 #include "StaticFunctions.h"
 #include "Types.h"
 #include <iostream>
+#include <sstream>
 
 int main()
 {
@@ -25,4 +26,14 @@ int main()
 	std::cout << "Day 05_2: " << Functions::calculateHydrothermalDanger(day5, true) << std::endl;		 // 21373
 	std::cout << "Day 06_1: " << Functions::calculateFishPopulation(day6, 80) << std::endl;				 // 352151
 	std::cout << "Day 06_2: " << Functions::calculateFishPopulation(day6, 256) << std::endl;			 // 1601616884019
+
+	auto answer = Functions::calculateCrabSubmarineFuelReq(day7);
+	std::stringstream ss;
+	ss << std::get<0>(answer) << ", " << std::get<1>(answer);
+	std::cout << "Day 07_1: " << ss.str() << std::endl; // 1601616884019
+
+	answer = Functions::calculateCrabSubmarineFuelReq(day7, true);
+	std::stringstream sstr;
+	sstr << std::get<0>(answer) << ", " << std::get<1>(answer);
+	std::cout << "Day 07_2: " << sstr.str() << std::endl; // 1601616884019
 }

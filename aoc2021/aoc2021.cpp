@@ -36,4 +36,7 @@ int main()
 	std::stringstream sstr;
 	sstr << std::get<0>(answer) << ", " << std::get<1>(answer);
 	std::cout << "Day 07_2: " << sstr.str() << std::endl; // 1601616884019
+
+	std::cout << "Day 08_1: " << Functions::calculateUniqueNumber(day8) << std::endl; // 514
+	std::cout << "Day 08_2: " << Functions::decodeUniqueNumber(day8) << std::endl;	  // 1012272
 }

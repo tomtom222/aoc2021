@@ -16,6 +16,8 @@ public:
 	static const uint calculateHydrothermalDanger(const Lines& lines, bool diag);
 	static const uint64 calculateFishPopulation(std::vector<uint> fish, const uint days);
 	static const std::pair<uint, uint> calculateCrabSubmarineFuelReq(std::vector<uint> crabs, bool correctfuel = false);
+	static const uint calculateUniqueNumber(const std::vector<std::string>& input);
+	static const uint decodeUniqueNumber(const std::vector<std::string>& input);
 };
 
 class Utils
@@ -23,4 +25,5 @@ class Utils
 public:
 	static BingoCard createBingoCard(const std::vector<uint>& input);
 	static bool checkBingo(BingoCard& card, uint number);
+	static std::vector<std::string> split(const std::string& input, const std::string& pattern);
 };

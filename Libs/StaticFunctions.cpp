@@ -394,7 +394,6 @@ const uint Functions::calculateHydrothermalDanger(const Lines& lines, bool diag)
 	return count;
 }
 
-
 std::vector<fishage> daycalc(std::vector<fishage>& fish)
 {
 	std::vector<fishage> fishies =
@@ -410,7 +409,6 @@ std::vector<fishage> daycalc(std::vector<fishage>& fish)
 			{0, 0},
 		};
 
-
 	for (size_t i = 0; i < fish.size(); i++)
 	{
 		switch (std::get<0>(fish[i]))
@@ -425,8 +423,8 @@ std::vector<fishage> daycalc(std::vector<fishage>& fish)
 		case 1:
 		{
 			auto f = std::get<1>(fish[i]);
-			std::get<1>(fishies[i + 1]) += f; 
-			//std::get<1>(fish[i]) -= f; 
+			std::get<1>(fishies[i + 1]) += f;
+			//std::get<1>(fish[i]) -= f;
 			break;
 		}
 		case 0:
@@ -446,18 +444,18 @@ std::vector<fishage> daycalc(std::vector<fishage>& fish)
 
 const uint64 Functions::calculateFishPopulation(std::vector<uint> fish, const uint days)
 {
-	std::vector<fishage> fishies = 
-	{
-			{8,0},
-			{7,0},
-			{6,0},
-			{5,0},
-			{4,0},
-			{3,0},
-			{2,0},
-			{1,0},
-			{0,0},
-	};
+	std::vector<fishage> fishies =
+		{
+			{8, 0},
+			{7, 0},
+			{6, 0},
+			{5, 0},
+			{4, 0},
+			{3, 0},
+			{2, 0},
+			{1, 0},
+			{0, 0},
+		};
 
 	for (size_t i = 0; i < fish.size(); i++)
 	{
@@ -470,7 +468,6 @@ const uint64 Functions::calculateFishPopulation(std::vector<uint> fish, const ui
 		}
 	}
 
-	
 	for (size_t i = 0; i < days; i++)
 	{
 		fishies = daycalc(fishies);
@@ -485,7 +482,7 @@ const uint64 Functions::calculateFishPopulation(std::vector<uint> fish, const ui
 	return count;
 }
 
-const std::pair<uint,uint> Functions::calculateCrabSubmarineFuelReq(std::vector<uint> crabs, bool correctfuel)
+const std::pair<uint, uint> Functions::calculateCrabSubmarineFuelReq(std::vector<uint> crabs, bool correctfuel)
 {
 	uint maxheight = 0;
 	uint minheight = UINT_MAX;
@@ -512,7 +509,7 @@ const std::pair<uint,uint> Functions::calculateCrabSubmarineFuelReq(std::vector<
 			{
 				uint diff = std::abs((int)i - (int)crab);
 
-				fuel += (diff*(diff+1))/2;
+				fuel += (diff * (diff + 1)) / 2;
 			}
 			else
 			{
@@ -528,6 +525,181 @@ const std::pair<uint,uint> Functions::calculateCrabSubmarineFuelReq(std::vector<
 	}
 
 	return fuelreq;
+}
+
+const uint Functions::calculateUniqueNumber(const std::vector<std::string>& input)
+{
+	uint num = 0;
+
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		auto answer = Utils::split(input[i], " | ")[1];
+		auto answerpart = Utils::split(answer, " ");
+		for (size_t j = 0; j < answerpart.size(); j++)
+		{
+			switch (answerpart[j].size())
+			{
+			case 2: // 1
+			case 3: // 7
+			case 4: // 4
+			case 7: // 8
+				num++;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	return num;
+}
+
+bool find(const std::string& input, const std::string& match)
+{
+	bool answer = true;
+	for (auto& c : match)
+	{
+		answer &= input.find(c) != std::string::npos;
+	}
+	return answer;
+}
+
+const uint Functions::decodeUniqueNumber(const std::vector<std::string>& input)
+{
+	typedef std::pair<std::vector<std::string>, SevenSegmentDisplay> puzzle;
+	std::vector<puzzle> puzzles;
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		std::vector<std::string> digitcodes;
+		auto inputpart = Utils::split(input[i], " | ");
+		for (size_t i = 0; i < inputpart.size(); i++)
+		{
+			auto splits = Utils::split(inputpart[i], " ");
+			digitcodes.insert(digitcodes.end(), splits.begin(), splits.end());
+		}
+
+		// sort letter combos and list
+		for (auto& digitcode : digitcodes)
+		{
+			std::sort(digitcode.begin(), digitcode.end());
+		}
+		std::sort(digitcodes.begin(), digitcodes.end());
+		digitcodes.erase(std::unique(digitcodes.begin(), digitcodes.end()), digitcodes.end());
+
+		SevenSegmentDisplay d;
+		std::vector<std::string> leftoverdigitcodes;
+		// loop through and get known digits
+		for (auto& digitcode : digitcodes)
+		{
+			std::sort(digitcode.begin(), digitcode.end());
+			switch (digitcode.size())
+			{
+			case 2: // 1
+				if (!d.find(digitcode))
+				{
+					d.add(digitcode, 1);
+				}
+				break;
+			case 3: // 7
+				if (!d.find(digitcode))
+				{
+					d.add(digitcode, 7);
+				}
+				break;
+
+			case 4: // 4
+				if (!d.find(digitcode))
+				{
+					d.add(digitcode, 4);
+				}
+				break;
+
+			case 7: // 8
+				if (!d.find(digitcode))
+				{
+					d.add(digitcode, 8);
+				}
+				break;
+			default:
+				leftoverdigitcodes.push_back(digitcode);
+				break;
+			}
+		}
+		
+		// loop through and work out unkowns at this point we MUST have 1,4,7,8
+		digitcodes = leftoverdigitcodes;
+		do
+		{
+			leftoverdigitcodes.clear();
+			for (auto& digitcode : digitcodes)
+			{
+				switch (digitcode.size())
+				{
+				case 5: // 2,3,5 // 3 contains a 1, use 6 to detirmine 5, 2 is the leftover
+					if (d.find(1) && find(digitcode,d.at(1))) // we found 3
+					{
+						d.add(digitcode, 3);
+					}
+					else if (d.find(6) && find(d.at(6),digitcode)) // we found 5
+					{
+						d.add(digitcode, 5);
+					}
+					else if (d.find(3) && d.find(5)) // it must be 2
+					{
+						d.add(digitcode, 2);
+					}
+					else // we are not ready for it
+					{
+						leftoverdigitcodes.push_back(digitcode);
+					}
+					break;
+				case 6: // 0,6,9 // 9 contains a 4, 0 contains 1, 6 is the leftover
+					if (d.find(4) && find(digitcode,d.at(4)))
+					{
+						d.add(digitcode, 9);
+					}
+					else if (d.find(9) && d.find(1) && find(digitcode, d.at(1)))
+					{
+						d.add(digitcode, 0);
+					}
+					else if (d.find(9) && d.find(0))
+					{
+						d.add(digitcode, 6);
+					}
+					else
+					{
+						leftoverdigitcodes.push_back(digitcode);
+					}
+					break;
+				default:
+					std::cout << "ERROR" << std::endl;
+					break;
+				}
+			}
+			digitcodes = leftoverdigitcodes;
+
+		} while (digitcodes.size() > 0);
+
+		auto puzzleinput = Utils::split(inputpart[1], " ");
+		for (auto& p : puzzleinput)
+		{
+			std::sort(p.begin(), p.end());
+		}
+		puzzles.push_back({puzzleinput, d});
+	}
+
+	uint count = 0;
+	for (auto& p :puzzles)
+	{
+		std::string num;
+		for (auto& s : p.first)
+		{
+			num.append(p.second.getstring(s));
+		}
+		count += std::strtoul(num.c_str(),nullptr,10);
+	}
+
+	//do calculate numbers or something
+	return count;
 }
 
 BingoCard Utils::createBingoCard(const std::vector<uint>& input)
@@ -606,4 +778,23 @@ bool Utils::checkBingo(BingoCard& card, uint number)
 	}
 
 	return bingo;
+}
+
+std::vector<std::string> Utils::split(const std::string& string, const std::string& pattern)
+{
+	std::vector<std::string> result;
+	std::string input = string;
+	size_t previt = 0;
+	bool cont = true;
+	while (cont)
+	{
+		auto it = input.find(pattern);
+		if (it == std::string::npos)
+		{
+			cont = false;
+		}
+		result.push_back(input.substr(0, it));
+		input.erase(0, it + pattern.size());
+	}
+	return result;
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include <tuple>
 #include <vector>
+#include <map>
+#include <string>
 
 typedef unsigned int uint;
 typedef unsigned long long int uint64;
@@ -49,4 +51,62 @@ struct Line
 typedef std::vector<Line> Lines;
 
 typedef std::pair<uint, uint64> fishage;
+
+struct SevenSegmentDisplay
+{
+	// Display positions
+	//	 0000
+	//	6    1
+	//	6    1
+	//	 5555
+	//	4    2
+	//	4    2
+	//	 3333
+
+	void add(std::string& code, uint digit)
+	{
+		mapping[code] = digit;
+		rmapping[digit] = code;
+	};
+
+	uint at(const std::string& code)
+	{
+		auto it = mapping.find(code);
+		if (it != mapping.end())
+		{
+			return it->second;
+		}
+	};
+	std::string& at(uint digit)
+	{
+		auto it = rmapping.find(digit);
+		if (it != rmapping.end())
+		{
+			return it->second;
+		}
+	};
+	std::string getstring(const std::string& code)
+	{
+		auto it = mapping.find(code);
+		if (it != mapping.end())
+		{
+			return std::to_string(it->second);
+		}
+	};
+
+	bool find(const std::string& code)
+	{
+		auto it = mapping.find(code);
+		return (it != mapping.end()) ?  true : false;
+	};
+	bool find(uint digit)
+	{
+		auto it = rmapping.find(digit);
+		return (it != rmapping.end()) ? true : false;
+	};
+
+private:
+	std::map<std::string, uint> mapping;
+	std::map<uint, std::string> rmapping;
+};
 

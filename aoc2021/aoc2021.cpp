@@ -39,4 +39,7 @@ int main()
 
 	std::cout << "Day 08_1: " << Functions::calculateUniqueNumber(day8) << std::endl; // 514
 	std::cout << "Day 08_2: " << Functions::decodeUniqueNumber(day8) << std::endl;	  // 1012272
+	std::cout << "Day 08_2Wouter: " << Functions::decodeUniqueNumber(day8Wouter) << std::endl;	  // 1012272
+	std::cout << "Day 09_1: " << Functions::calculateSmokeHazard(day9) << std::endl;  // 489
+	std::cout << "Day 09_2: " << Functions::calculateLargeCavern(day9) << std::endl;  // 1012272
 }

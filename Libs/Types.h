@@ -14,8 +14,8 @@ enum class DiveCommand : uint
 	up,
 };
 typedef std::tuple<DiveCommand, uint> DiveInstruction;
-typedef std::tuple<uint, bool> BingoNumber;
 
+typedef std::tuple<uint, bool> BingoNumber;
 struct BingoCard
 {
 	BingoCard()
@@ -40,8 +40,9 @@ struct Coordinate
 		return std::tie(lhs.x, lhs.y) < std::tie(rhs.x, rhs.y);
 	};
 };
-
 typedef std::vector<Coordinate> Coordinates;
+
+typedef std::pair<uint, uint64> fishage;
 
 struct Line
 {
@@ -50,7 +51,6 @@ struct Line
 };
 typedef std::vector<Line> Lines;
 
-typedef std::pair<uint, uint64> fishage;
 
 struct SevenSegmentDisplay
 {
@@ -109,4 +109,5 @@ private:
 	std::map<std::string, uint> mapping;
 	std::map<uint, std::string> rmapping;
 };
+
 

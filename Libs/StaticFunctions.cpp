@@ -624,7 +624,7 @@ const uint Functions::decodeUniqueNumber(const std::vector<std::string>& input)
 				break;
 			}
 		}
-		
+
 		// loop through and work out unkowns at this point we MUST have 1,4,7,8
 		digitcodes = leftoverdigitcodes;
 		do
@@ -634,12 +634,12 @@ const uint Functions::decodeUniqueNumber(const std::vector<std::string>& input)
 			{
 				switch (digitcode.size())
 				{
-				case 5: // 2,3,5 // 3 contains a 1, use 6 to detirmine 5, 2 is the leftover
-					if (d.find(1) && find(digitcode,d.at(1))) // we found 3
+				case 5:										   // 2,3,5 // 3 contains a 1, use 6 to detirmine 5, 2 is the leftover
+					if (d.find(1) && find(digitcode, d.at(1))) // we found 3
 					{
 						d.add(digitcode, 3);
 					}
-					else if (d.find(6) && find(d.at(6),digitcode)) // we found 5
+					else if (d.find(6) && find(d.at(6), digitcode)) // we found 5
 					{
 						d.add(digitcode, 5);
 					}
@@ -653,7 +653,7 @@ const uint Functions::decodeUniqueNumber(const std::vector<std::string>& input)
 					}
 					break;
 				case 6: // 0,6,9 // 9 contains a 4, 0 contains 1, 6 is the leftover
-					if (d.find(4) && find(digitcode,d.at(4)))
+					if (d.find(4) && find(digitcode, d.at(4)))
 					{
 						d.add(digitcode, 9);
 					}
@@ -688,18 +688,229 @@ const uint Functions::decodeUniqueNumber(const std::vector<std::string>& input)
 	}
 
 	uint count = 0;
-	for (auto& p :puzzles)
+	for (auto& p : puzzles)
 	{
 		std::string num;
 		for (auto& s : p.first)
 		{
 			num.append(p.second.getstring(s));
 		}
-		count += std::strtoul(num.c_str(),nullptr,10);
+		count += std::strtoul(num.c_str(), nullptr, 10);
 	}
 
 	//do calculate numbers or something
 	return count;
+}
+
+const uint Functions::calculateSmokeHazard(const std::vector<std::string>& input)
+{
+	uint risklevel = 0;
+	std::vector<std::vector<uint>> cavemap;
+	cavemap.resize(input.size());
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		for (size_t j = 0; j < input[i].size(); j++)
+		{
+			char c = input[i][j];
+			cavemap[i].push_back(std::strtoul(&c, nullptr, 10));
+		}
+	}
+
+	for (size_t i = 0; i < cavemap.size(); i++)
+	{
+		for (size_t j = 0; j < cavemap[i].size(); j++)
+		{
+			uint value = cavemap[i][j];
+			uint above = UINT_MAX;
+			uint below = UINT_MAX;
+			uint left = UINT_MAX;
+			uint right = UINT_MAX;
+			// get above
+			if (i > 0)
+			{
+				above = cavemap[i - 1][j];
+			}
+			// get below
+			if (i < cavemap.size() - 1)
+			{
+				below = cavemap[i + 1][j];
+			}
+			// get left
+			if (j > 0)
+			{
+				left = cavemap[i][j - 1];
+			}
+			// get right
+			if (j < cavemap[i].size() - 1)
+			{
+				right = cavemap[i][j + 1];
+			}
+
+			// check
+			if (value < above && value < below && value < left && value < right)
+			{
+				risklevel += 1 + value;
+			}
+		}
+	}
+	return risklevel;
+}
+
+void checkcells(std::vector<std::vector<std::pair<uint, bool>>>& cavemap, uint i, uint j, uint& counter)
+{
+	// check all around
+	std::vector<std::pair<uint, uint>> pointsToCheck;
+	//// upperleft
+	//if (i>0 && j>0)
+	//{
+	//	if (cavemap[i-1][j-1].first != 9 && cavemap[i-1][j-1].second != true)
+	//	{
+	//		pointsToCheck.push_back({i-1, j-1});
+	//		cavemap[i-1][j-1].second = true;
+	//		counter++;
+	//	}
+	//}
+	// upper
+	if (i>0)
+	{
+		if (cavemap[i - 1][j].first != 9 && cavemap[i - 1][j].second != true)
+		{
+			pointsToCheck.push_back({i - 1, j});
+			cavemap[i - 1][j].second = true;
+			counter++;
+		}
+	}
+	//// upperright
+	//if (i > 0 && j < cavemap[i].size()-1)
+	//{
+	//	if (cavemap[i - 1][j + 1].first != 9 && cavemap[i - 1][j + 1].second != true)
+	//	{
+	//		pointsToCheck.push_back({i - 1, j + 1});
+	//		cavemap[i - 1][j + 1].second = true;
+	//		counter++;
+	//	}
+	//}
+	// right
+	if (j < cavemap[i].size()-1)
+	{
+		if (cavemap[i][j + 1].first != 9 && cavemap[i][j + 1].second != true)
+		{
+			pointsToCheck.push_back({i, j + 1});
+			cavemap[i][j + 1].second = true;
+			counter++;
+		}
+	}
+	//// bottomright
+	//if (i < cavemap.size()-1 && j < cavemap[i].size()-1)
+	//{
+	//	if (cavemap[i + 1][j + 1].first != 9 && cavemap[i + 1][j + 1].second != true)
+	//	{
+	//		pointsToCheck.push_back({i + 1, j + 1});
+	//		cavemap[i + 1][j + 1].second = true;
+	//		counter++;
+	//	}
+	//}
+	// bottom
+	if (i < cavemap.size()-1)
+	{
+		if (cavemap[i + 1][j].first != 9 && cavemap[i + 1][j].second != true)
+		{
+			pointsToCheck.push_back({i + 1, j});
+			cavemap[i + 1][j].second = true;
+			counter++;
+		}
+	}
+	//// bottomleft
+	//if (i < cavemap.size()-1 && j > 0)
+	//{
+	//	if (cavemap[i + 1][j - 1].first != 9 && cavemap[i + 1][j - 1].second != true)
+	//	{
+	//		pointsToCheck.push_back({i + 1, j - 1});
+	//		cavemap[i + 1][j - 1].second = true;
+	//		counter++;
+	//	}
+	//}
+	// left
+	if (j > 0)
+	{
+		if (cavemap[i][j - 1].first != 9 && cavemap[i][j - 1].second != true)
+		{
+			pointsToCheck.push_back({i, j - 1});
+			cavemap[i][j - 1].second = true;
+			counter++;
+		}
+	}
+
+	for (auto& p : pointsToCheck)
+	{
+		checkcells(cavemap, p.first, p.second, counter);
+	}
+
+	// make list of point that need checking all around
+	// recursion party!!!!
+}
+
+const uint Functions::calculateLargeCavern(const std::vector<std::string>& input)
+{
+	std::vector<uint> basins;
+	std::vector<std::vector<std::pair<uint,bool>>> cavemap;
+	cavemap.resize(input.size());
+	for (size_t i = 0; i < input.size(); i++)
+	{
+		for (size_t j = 0; j < input[i].size(); j++)
+		{
+			char c = input[i][j];
+			cavemap[i].push_back({std::strtoul(&c, nullptr, 10), false});
+		}
+	}
+
+	for (size_t i = 0; i < cavemap.size(); i++)
+	{
+		for (size_t j = 0; j < cavemap[i].size(); j++)
+		{
+			uint value = cavemap[i][j].first;
+			uint above = UINT_MAX;
+			uint below = UINT_MAX;
+			uint left = UINT_MAX;
+			uint right = UINT_MAX;
+			// get above
+			if (i > 0)
+			{
+				above = cavemap[i - 1][j].first;
+			}
+			// get below
+			if (i < cavemap.size() - 1)
+			{
+				below = cavemap[i + 1][j].first;
+			}
+			// get left
+			if (j > 0)
+			{
+				left = cavemap[i][j - 1].first;
+			}
+			// get right
+			if (j < cavemap[i].size() - 1)
+			{
+				right = cavemap[i][j + 1].first;
+			}
+
+			// check
+			if (value < above && value < below && value < left && value < right)
+			{
+				// low point here
+				uint basinCount = 1; // as were in one
+				cavemap[i][j].second = true;
+				
+				checkcells(cavemap, i, j, basinCount);
+
+				basins.push_back(basinCount);
+			}
+		}
+	}
+
+	std::sort(basins.rbegin(), basins.rend());
+	
+	return basins[0] * basins[1] * basins[2];
 }
 
 BingoCard Utils::createBingoCard(const std::vector<uint>& input)

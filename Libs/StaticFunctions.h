@@ -18,6 +18,8 @@ public:
 	static const std::pair<uint, uint> calculateCrabSubmarineFuelReq(std::vector<uint> crabs, bool correctfuel = false);
 	static const uint calculateUniqueNumber(const std::vector<std::string>& input);
 	static const uint decodeUniqueNumber(const std::vector<std::string>& input);
+	static const uint calculateSmokeHazard(const std::vector<std::string>& input);
+	static const uint calculateLargeCavern(const std::vector<std::string>& input);
 };
 
 class Utils

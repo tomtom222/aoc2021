@@ -140,8 +140,22 @@ TEST(Day08, SevenSegment)
 			{"egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | gbdfcae bgc cg cgb"},
 			{"gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce"},
 		};
-	
-	
+
 	EXPECT_EQ(Functions::calculateUniqueNumber(test), 26u);
 	EXPECT_EQ(Functions::decodeUniqueNumber(test), 61229u);
+}
+
+TEST(Day09, SmokeBasin)
+{
+	std::vector<std::string> test =
+		{
+			"2199943210",
+			"3987894921",
+			"9856789892",
+			"8767896789",
+			"9899965678"
+		};
+
+	EXPECT_EQ(Functions::calculateSmokeHazard(test), 15u);
+	EXPECT_EQ(Functions::calculateLargeCavern(test), 1134u);
 }

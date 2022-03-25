@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iostream>
 #include <map>
+#include <cassert>
+#include <algorithm>
 
 const uint Functions::slidingSonarSweep(const std::vector<uint>& vec, const uint window)
 {
@@ -760,16 +762,6 @@ void checkcells(std::vector<std::vector<std::pair<uint, bool>>>& cavemap, uint i
 {
 	// check all around
 	std::vector<std::pair<uint, uint>> pointsToCheck;
-	//// upperleft
-	//if (i>0 && j>0)
-	//{
-	//	if (cavemap[i-1][j-1].first != 9 && cavemap[i-1][j-1].second != true)
-	//	{
-	//		pointsToCheck.push_back({i-1, j-1});
-	//		cavemap[i-1][j-1].second = true;
-	//		counter++;
-	//	}
-	//}
 	// upper
 	if (i>0)
 	{
@@ -780,16 +772,6 @@ void checkcells(std::vector<std::vector<std::pair<uint, bool>>>& cavemap, uint i
 			counter++;
 		}
 	}
-	//// upperright
-	//if (i > 0 && j < cavemap[i].size()-1)
-	//{
-	//	if (cavemap[i - 1][j + 1].first != 9 && cavemap[i - 1][j + 1].second != true)
-	//	{
-	//		pointsToCheck.push_back({i - 1, j + 1});
-	//		cavemap[i - 1][j + 1].second = true;
-	//		counter++;
-	//	}
-	//}
 	// right
 	if (j < cavemap[i].size()-1)
 	{
@@ -800,16 +782,6 @@ void checkcells(std::vector<std::vector<std::pair<uint, bool>>>& cavemap, uint i
 			counter++;
 		}
 	}
-	//// bottomright
-	//if (i < cavemap.size()-1 && j < cavemap[i].size()-1)
-	//{
-	//	if (cavemap[i + 1][j + 1].first != 9 && cavemap[i + 1][j + 1].second != true)
-	//	{
-	//		pointsToCheck.push_back({i + 1, j + 1});
-	//		cavemap[i + 1][j + 1].second = true;
-	//		counter++;
-	//	}
-	//}
 	// bottom
 	if (i < cavemap.size()-1)
 	{
@@ -820,16 +792,6 @@ void checkcells(std::vector<std::vector<std::pair<uint, bool>>>& cavemap, uint i
 			counter++;
 		}
 	}
-	//// bottomleft
-	//if (i < cavemap.size()-1 && j > 0)
-	//{
-	//	if (cavemap[i + 1][j - 1].first != 9 && cavemap[i + 1][j - 1].second != true)
-	//	{
-	//		pointsToCheck.push_back({i + 1, j - 1});
-	//		cavemap[i + 1][j - 1].second = true;
-	//		counter++;
-	//	}
-	//}
 	// left
 	if (j > 0)
 	{
@@ -843,11 +805,9 @@ void checkcells(std::vector<std::vector<std::pair<uint, bool>>>& cavemap, uint i
 
 	for (auto& p : pointsToCheck)
 	{
+		// recursion party!!!!
 		checkcells(cavemap, p.first, p.second, counter);
 	}
-
-	// make list of point that need checking all around
-	// recursion party!!!!
 }
 
 const uint Functions::calculateLargeCavern(const std::vector<std::string>& input)
@@ -911,6 +871,224 @@ const uint Functions::calculateLargeCavern(const std::vector<std::string>& input
 	std::sort(basins.rbegin(), basins.rend());
 	
 	return basins[0] * basins[1] * basins[2];
+}
+
+enum class returnType
+{
+	nomatch,
+	match,
+	corrupt,
+};
+
+bool openchar(const char open)
+{
+	return open == '(' || open == '<' || open == '[' || open == '{';
+}
+
+bool closechar(const char open)
+{
+	return open == ')' || open == '>' || open == ']' || open == '}';
+}
+
+returnType checkChars(const char open, const char close)
+{
+	switch (open)
+	{
+	case '(':
+		if (closechar(close) && close == ')')
+		{
+			return returnType::match;
+		}
+		else if (closechar(close))
+		{
+			return returnType::corrupt;
+		}
+	case '[':
+		if (closechar(close) && close == ']')
+		{
+			return returnType::match;
+		}
+		else if (closechar(close))
+		{
+			return returnType::corrupt;
+		}
+	case '{':
+		if (closechar(close) && close == '}')
+		{
+			return returnType::match;
+		}
+		else if (closechar(close))
+		{
+			return returnType::corrupt;
+		}
+	case '<':
+		if (closechar(close) && close == '>')
+		{
+			return returnType::match;
+		}
+		else if (closechar(close))
+		{
+			return returnType::corrupt;
+		}
+	default:
+		break;
+	}
+
+	return returnType::nomatch;
+}
+
+uint syntaxscore(const char input)
+{
+	switch (input)
+	{
+	case ')':
+		return 3u;
+	case ']':
+		return 57u;
+	case '}':
+		return 1197u;
+	case '>':
+		return 25137u;
+	default:
+		return 0u;
+	}
+}
+
+const uint Functions::calculateSyntaxScore(const std::vector<std::string>& input)
+{
+	std::vector<std::string> vec = input;
+	uint counter = 0;
+
+	for (auto& line : vec)
+	{
+		bool corrupt = false;
+		for (size_t i = 0; i < line.size()-1 && !corrupt;) // -1 as the last check wont need to happen
+		{
+			switch (checkChars(line[i],line[i+1]))
+			{
+			case returnType::match:
+				line.erase(i,2); // removes i
+				i--;
+				break;
+			case returnType::corrupt:
+				counter += syntaxscore(line[i + 1]);
+				corrupt = true;
+				break;
+			case returnType::nomatch:
+			default:
+				i++;
+				break;
+			}
+		}
+	}
+	
+	return counter;
+}
+
+std::string fix(const std::string& input)
+{
+	std::string output;
+	
+	std::string rinput(input.rbegin(), input.rend());
+
+	for (size_t i = 0; i < rinput.size(); i++)
+	{
+		switch (rinput[i])
+		{
+		case '(':
+			output.push_back(')');
+			break;
+		case '[':
+			output.push_back(']');
+			break;
+		case '{':
+			output.push_back('}');
+			break;
+		case '<':
+			output.push_back('>');
+			break;
+		default:
+			break;
+		}
+	}
+	assert(output.size() == rinput.size());
+	return output;
+}
+
+const uint Functions::calculateSyntaxFixScore(const std::vector<std::string>& input)
+{
+	std::vector<std::string> vec = input;
+	std::vector<std::string> fixable;
+	std::vector<std::string> corrupted;
+	uint counter = 0;
+
+	for (auto& line : vec)
+	{
+		bool corrupt = false;
+		for (size_t i = 0; i < line.size() - 1 && !corrupt;) // -1 as the last check wont need to happen
+		{
+			switch (checkChars(line[i], line[i + 1]))
+			{
+			case returnType::match:
+				line.erase(i, 2); // removes i
+				if (i)
+				{
+					i--;
+				}
+				break;
+			case returnType::corrupt:
+				counter += syntaxscore(line[i + 1]);
+				corrupt = true;
+				break;
+			case returnType::nomatch:
+			default:
+				i++;
+				break;
+			}
+		}
+		if (!corrupt)
+		{
+			fixable.push_back(line);
+		}
+		else
+		{
+			corrupted.push_back(line);
+		}
+	}
+
+	assert((corrupted.size() + fixable.size()) == vec.size());
+
+	std::vector<uint> fixpoints;
+	for (auto& s : fixable)
+	{
+		std::string endchars = fix(s);
+		uint score = 0;
+
+		for (auto& c : endchars)
+		{
+			switch (c)
+			{
+			case ')':
+				score = (score * 5) + 1u;
+				break;
+			case ']':
+				score = (score * 5) + 2u;
+				break;
+			case '}':
+				score = (score * 5) + 3u;
+				break;
+			case '>':
+				score = (score * 5) + 4u;
+				break;
+			}
+		}
+		fixpoints.push_back(score);
+	}
+
+	std::sort(fixpoints.begin(), fixpoints.end());
+	auto middle = fixpoints.begin() + fixpoints.size()/ 2;
+	uint bla = *middle;
+	return *middle;
 }
 
 BingoCard Utils::createBingoCard(const std::vector<uint>& input)

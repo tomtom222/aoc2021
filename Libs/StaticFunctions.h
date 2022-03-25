@@ -20,6 +20,8 @@ public:
 	static const uint decodeUniqueNumber(const std::vector<std::string>& input);
 	static const uint calculateSmokeHazard(const std::vector<std::string>& input);
 	static const uint calculateLargeCavern(const std::vector<std::string>& input);
+	static const uint calculateSyntaxScore(const std::vector<std::string>& input);
+	static const uint calculateSyntaxFixScore(const std::vector<std::string>& input);
 };
 
 class Utils

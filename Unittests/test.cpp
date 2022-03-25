@@ -73,7 +73,8 @@ TEST(Day04, Bingo)
 		{
 			{22, 13, 17, 11, 0, 8, 2, 23, 4, 24, 21, 9, 14, 16, 7, 6, 10, 3, 18, 5, 1, 12, 20, 15, 19},
 			{3, 15, 0, 2, 22, 9, 18, 13, 17, 5, 19, 8, 7, 25, 23, 20, 11, 10, 24, 4, 14, 21, 16, 12, 6},
-			{14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0, 12, 3, 7}};
+			{14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0, 12, 3, 7},
+		};
 
 	std::vector<BingoCard> cards;
 	cards.resize(bingoCards.size());
@@ -100,7 +101,8 @@ TEST(Day05, Hydrothermal)
 			{{0, 9}, {2, 9}},
 			{{3, 4}, {1, 4}},
 			{{0, 0}, {8, 8}},
-			{{5, 5}, {8, 2}}};
+			{{5, 5}, {8, 2}},
+		};
 
 	EXPECT_EQ(Functions::calculateHydrothermalDanger(test, false), 5u);
 	EXPECT_EQ(Functions::calculateHydrothermalDanger(test, true), 12u);
@@ -153,9 +155,29 @@ TEST(Day09, SmokeBasin)
 			"3987894921",
 			"9856789892",
 			"8767896789",
-			"9899965678"
+			"9899965678",
 		};
 
 	EXPECT_EQ(Functions::calculateSmokeHazard(test), 15u);
 	EXPECT_EQ(Functions::calculateLargeCavern(test), 1134u);
+}
+
+TEST(Day10, Syntax)
+{
+	std::vector<std::string> test =
+		{
+			{"[({(<(())[]>[[{[]{<()<>>"},
+			{"[(()[<>])]({[<{<<[]>>("},
+			{"{([(<{}[<>[]}>{[]{[(<()>"},
+			{"(((({<>}<{<{<>}{[]{[]{}"},
+			{"[[<[([]))<([[{}[[()]]]"},
+			{"[{[{({}]{}}([{[{{{}}([]"},
+			{"{<[[]]>}<{[{[{[]{()[[[]"},
+			{"[<(<(<(<{}))><([]([]()"},
+			{"<{([([[(<>()){}]>(<<{{"},
+			{"<{([{{}}[<[[[<>{}]]]>[]]"},
+		};
+
+	EXPECT_EQ(Functions::calculateSyntaxScore(test), 26397u);
+	EXPECT_EQ(Functions::calculateSyntaxFixScore(test), 288957u);
 }
